@@ -471,12 +471,16 @@ app.get('/v1/brc20/event', async (request, response) => {
       return
     }
 
+    if (!Array.isArray(inscription_id)) {
+      inscription_id = inscription_id.split(',')
+    }
+
     let query = `select id, event, event_type, inscription_id, block_height
                   from brc20_events
-                  where inscription_id = $1
+                  where inscription_id = ANY($1::text[])
                   union select id, event, event_type, inscription_id, block_height
                   from brc20_light_events
-                  where inscription_id = $1
+                  where inscription_id = ANY($1::text[])
                   order by id asc;`
     let res = await query_db(query, [inscription_id])
     let result = []
