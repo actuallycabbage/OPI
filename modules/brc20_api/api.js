@@ -509,7 +509,7 @@ app.get('/v1/brc20/event', async (request, response) => {
       return
     }
 
-    let query =  `select event, event_type, inscription_id block_height
+    let query =  `select event, event_type, inscription_id, block_height
                   from brc20_events
                   where inscription_id = $1
                   order by id asc;`
@@ -519,8 +519,10 @@ app.get('/v1/brc20/event', async (request, response) => {
       let event = row.event
       let event_type = event_type_id_to_name[row.event_type]
       let inscription_id = row.inscription_id
+      let block_height = row.block_height
       event.event_type = event_type
       event.inscription_id = inscription_id
+      event.block_height = block_height
       result.push(event)
     }
     response.send({ error: null, result: result })
